@@ -27,12 +27,13 @@ if($use_sessions==1){
 include $_SERVER['DOCUMENT_ROOT']."/functions.php";
 error_reporting(E_ALL ^ E_NOTICE);
 
-$server2_email_error="";
-$server2_email_interval_error="";
+$email_error="";
+$email_interval_error="";
 $plex_skip_version_error="";
 $generic_error="";
 $delete_file="";
 $file_delete_error="";
+$from_email_error="";
 		
 if(isset($_POST['delete_files_submit'])){
 	[$delete_file, $file_delete_error] = test_input_processing($_POST['remove_plex_version'], "", "file", 0, 0);
@@ -51,17 +52,19 @@ if(isset($_POST['submit_PLEX_config'])){
 		$pieces = explode(",", $data);
 	}
 		   
-	[$server2_email, $server2_email_error] = test_input_processing($_POST['server2_email'], $pieces[2], "email", 0, 0);
+	[$email, $email_error] = test_input_processing($_POST['email'], $pieces[2], "email", 0, 0);
 		  
 	[$plex_pass_beta, $generic_error] = test_input_processing($_POST['plex_pass_beta'], "", "checkbox", 0, 0);
 		  
-	[$minimum_package_age, $generic_error] = test_input_processing($_POST['minimum_package_age'], $pieces[1], "numeric", 1, 14);
+	[$minimum_package_age, $generic_error] = test_input_processing($_POST['minimum_package_age'], $pieces[1], "numeric", 1, 30);
 		  
 	[$fix_bad_intel_driver, $generic_error] = test_input_processing($_POST['fix_bad_intel_driver'], "", "checkbox", 0, 0);
 		  
 	[$script_enable, $generic_error] = test_input_processing($_POST['script_enable'], "", "checkbox", 0, 0);
+	
+	[$from_email, $from_email_error] = test_input_processing($_POST['from_email'], $pieces[5], "email", 0, 0);
 		 	  
-	$put_contents_string="".$plex_pass_beta.",".$minimum_package_age.",".$server2_email.",".$fix_bad_intel_driver.",".$script_enable."";
+	$put_contents_string="".$plex_pass_beta.",".$minimum_package_age.",".$email.",".$fix_bad_intel_driver.",".$script_enable.",".$from_email."";
 		  
 	file_put_contents("$config_file_location",$put_contents_string );
 		  
@@ -91,16 +94,18 @@ if(isset($_POST['submit_PLEX_config'])){
 		$pieces = explode(",", $data);
 		$plex_pass_beta=$pieces[0];
 		$minimum_package_age=$pieces[1];
-		$server2_email=$pieces[2];
+		$email=$pieces[2];
 		$fix_bad_intel_driver=$pieces[3];
 		$script_enable=$pieces[4];
+		$from_email=$pieces[5];
 	}else{
 		$plex_pass_beta=0;
 		$minimum_package_age=7;
-		$server2_email="admin@admin.com";
+		$email="admin@admin.com";
 		$fix_bad_intel_driver=0;
 		$script_enable=0;
-		$put_contents_string="".$plex_pass_beta.",".$minimum_package_age.",".$server2_email.",".$fix_bad_intel_driver.",".$script_enable."";
+		$from_email="admin@admin.com";
+		$put_contents_string="".$plex_pass_beta.",".$minimum_package_age.",".$email.",".$fix_bad_intel_driver.",".$script_enable.",".$from_email."";
 			  
 		file_put_contents("$config_file_location",$put_contents_string );
 	}
@@ -131,219 +136,16 @@ print "			</td>
 							print "checked";
 						}
 						print "> Enable Script?</p>
-						<p>Alert Email Recipient: <input type=\"text\" name=\"server2_email\" value=".$server2_email."> ".$server2_email_error."</p>
+						<p>Alert Email Recipient: <input type=\"text\" name=\"email\" value=".$email."> ".$email_error."</p>
+						<p>From Email Address: <input type=\"text\" name=\"from_email\" value=".$from_email."> ".$from_email_error."</p>
 						<p>Minimum Package Age: <select name=\"minimum_package_age\">";
-							if ($minimum_package_age==1){
-								print "<option value=\"1\" selected>1</option>
-								<option value=\"2\">2</option>
-								<option value=\"3\">3</option>
-								<option value=\"4\">4</option>
-								<option value=\"5\">5</option>
-								<option value=\"6\">6</option>
-								<option value=\"7\">7</option>
-								<option value=\"8\">8</option>
-								<option value=\"9\">9</option>
-								<option value=\"10\">10</option>
-								<option value=\"11\">11</option>
-								<option value=\"12\">12</option>
-								<option value=\"13\">13</option>
-								<option value=\"14\">14</option>";
-							}else if ($minimum_package_age==2){
-								print "<option value=\"1\">1</option>
-								<option value=\"2\" selected>2</option>
-								<option value=\"3\">3</option>
-								<option value=\"4\">4</option>
-								<option value=\"5\">5</option>
-								<option value=\"6\">6</option>
-								<option value=\"7\">7</option>
-								<option value=\"8\">8</option>
-								<option value=\"9\">9</option>
-								<option value=\"10\">10</option>
-								<option value=\"11\">11</option>
-								<option value=\"12\">12</option>
-								<option value=\"13\">13</option>
-								<option value=\"14\">14</option>";
-							}else if ($minimum_package_age==3){
-								print "<option value=\"1\">1</option>
-								<option value=\"2\">2</option>
-								<option value=\"3\" selected>3</option>
-								<option value=\"4\">4</option>
-								<option value=\"5\">5</option>
-								<option value=\"6\">6</option>
-								<option value=\"7\">7</option>
-								<option value=\"8\">8</option>
-								<option value=\"9\">9</option>
-								<option value=\"10\">10</option>
-								<option value=\"11\">11</option>
-								<option value=\"12\">12</option>
-								<option value=\"13\">13</option>
-								<option value=\"14\">14</option>";
-							}else if ($minimum_package_age==4){
-								print "<option value=\"1\">1</option>
-								<option value=\"2\">2</option>
-								<option value=\"3\">3</option>
-								<option value=\"4\" selected>4</option>
-								<option value=\"5\">5</option>
-								<option value=\"6\">6</option>
-								<option value=\"7\">7</option>
-								<option value=\"8\">8</option>
-								<option value=\"9\">9</option>
-								<option value=\"10\">10</option>
-								<option value=\"11\">11</option>
-								<option value=\"12\">12</option>
-								<option value=\"13\">13</option>
-								<option value=\"14\">14</option>";
-							}else if ($minimum_package_age==5){
-								print "<option value=\"1\">1</option>
-								<option value=\"2\">2</option>
-								<option value=\"3\">3</option>
-								<option value=\"4\">4</option>
-								<option value=\"5\" selected>5</option>
-								<option value=\"6\">6</option>
-								<option value=\"7\">7</option>
-								<option value=\"8\">8</option>
-								<option value=\"9\">9</option>
-								<option value=\"10\">10</option>
-								<option value=\"11\">11</option>
-								<option value=\"12\">12</option>
-								<option value=\"13\">13</option>
-								<option value=\"14\">14</option>";
-							}else if ($minimum_package_age==6){
-								print "<option value=\"1\">1</option>
-								<option value=\"2\">2</option>
-								<option value=\"3\">3</option>
-								<option value=\"4\">4</option>
-								<option value=\"5\">5</option>
-								<option value=\"6\" selected>6</option>
-								<option value=\"7\">7</option>
-								<option value=\"8\">8</option>
-								<option value=\"9\">9</option>
-								<option value=\"10\">10</option>
-								<option value=\"11\">11</option>
-								<option value=\"12\">12</option>
-								<option value=\"13\">13</option>
-								<option value=\"14\">14</option>";
-							}else if ($minimum_package_age==7){
-								print "<option value=\"1\">1</option>
-								<option value=\"2\">2</option>
-								<option value=\"3\">3</option>
-								<option value=\"4\">4</option>
-								<option value=\"5\">5</option>
-								<option value=\"6\">6</option>
-								<option value=\"7\" selected>7</option>
-								<option value=\"8\">8</option>
-								<option value=\"9\">9</option>
-								<option value=\"10\">10</option>
-								<option value=\"11\">11</option>
-								<option value=\"12\">12</option>
-								<option value=\"13\">13</option>
-								<option value=\"14\">14</option>";
-							}else if ($minimum_package_age==8){
-								print "<option value=\"1\">1</option>
-								<option value=\"2\">2</option>
-								<option value=\"3\">3</option>
-								<option value=\"4\">4</option>
-								<option value=\"5\">5</option>
-								<option value=\"6\">6</option>
-								<option value=\"7\">7</option>
-								<option value=\"8\" selected>8</option>
-								<option value=\"9\">9</option>
-								<option value=\"10\">10</option>
-								<option value=\"11\">11</option>
-								<option value=\"12\">12</option>
-								<option value=\"13\">13</option>
-								<option value=\"14\">14</option>";
-							}else if ($minimum_package_age==9){
-								print "<option value=\"1\">1</option>
-								<option value=\"2\">2</option>
-								<option value=\"3\">3</option>
-								<option value=\"4\">4</option>
-								<option value=\"5\">5</option>
-								<option value=\"6\">6</option>
-								<option value=\"7\">7</option>
-								<option value=\"8\">8</option>
-								<option value=\"9\" selected>9</option>
-								<option value=\"10\">10</option>
-								<option value=\"11\">11</option>
-								<option value=\"12\">12</option>
-								<option value=\"13\">13</option>
-								<option value=\"14\">14</option>";
-							}else if ($minimum_package_age==10){
-								print "<option value=\"1\">1</option>
-								<option value=\"2\">2</option>
-								<option value=\"3\">3</option>
-								<option value=\"4\">4</option>
-								<option value=\"5\">5</option>
-								<option value=\"6\">6</option>
-								<option value=\"7\">7</option>
-								<option value=\"8\">8</option>
-								<option value=\"9\">9</option>
-								<option value=\"10\" selected>10</option>
-								<option value=\"11\">11</option>
-								<option value=\"12\">12</option>
-								<option value=\"13\">13</option>
-								<option value=\"14\">14</option>";
-							}else if ($minimum_package_age==11){
-								print "<option value=\"1\">1</option>
-								<option value=\"2\">2</option>
-								<option value=\"3\">3</option>
-								<option value=\"4\">4</option>
-								<option value=\"5\">5</option>
-								<option value=\"6\">6</option>
-								<option value=\"7\">7</option>
-								<option value=\"8\">8</option>
-								<option value=\"9\">9</option>
-								<option value=\"10\">10</option>
-								<option value=\"11\" selected>11</option>
-								<option value=\"12\">12</option>
-								<option value=\"13\">13</option>
-								<option value=\"14\">14</option>";
-							}else if ($minimum_package_age==12){
-								print "<option value=\"1\">1</option>
-								<option value=\"2\">2</option>
-								<option value=\"3\">3</option>
-								<option value=\"4\">4</option>
-								<option value=\"5\">5</option>
-								<option value=\"6\">6</option>
-								<option value=\"7\">7</option>
-								<option value=\"8\">8</option>
-								<option value=\"9\">9</option>
-								<option value=\"10\">10</option>
-								<option value=\"11\">11</option>
-								<option value=\"12\" selected>12</option>
-								<option value=\"13\">13</option>
-								<option value=\"14\">14</option>";
-							}else if ($minimum_package_age==13){
-								print "<option value=\"1\">1</option>
-								<option value=\"2\">2</option>
-								<option value=\"3\">3</option>
-								<option value=\"4\">4</option>
-								<option value=\"5\">5</option>
-								<option value=\"6\">6</option>
-								<option value=\"7\">7</option>
-								<option value=\"8\">8</option>
-								<option value=\"9\">9</option>
-								<option value=\"10\">10</option>
-								<option value=\"11\">11</option>
-								<option value=\"12\">12</option>
-								<option value=\"13\" selected>13</option>
-								<option value=\"14\">14</option>";
-							}else if ($minimum_package_age==14){
-								print "<option value=\"1\">1</option>
-								<option value=\"2\">2</option>
-								<option value=\"3\">3</option>
-								<option value=\"4\">4</option>
-								<option value=\"5\">5</option>
-								<option value=\"6\">6</option>
-								<option value=\"7\">7</option>
-								<option value=\"8\">8</option>
-								<option value=\"9\">9</option>
-								<option value=\"10\">10</option>
-								<option value=\"11\">11</option>
-								<option value=\"12\">12</option>
-								<option value=\"13\">13</option>
-								<option value=\"14\" selected>14</option>";
+						for ($x=1;$x<=30;$x++){
+							print "<option value=\"".$x."\" ";
+							if ($minimum_package_age==$x){
+								print "selected";
 							}
+							print ">".$x."</option>";
+						}
 						print "</select></p>
 						<p><input type=\"checkbox\" name=\"plex_pass_beta\" value=\"1\" ";
 						if ($plex_pass_beta==1){
