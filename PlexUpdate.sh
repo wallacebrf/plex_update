@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#version 06/30/2022
+#By Brian Wallace
+
 #if using DSM6, make sure PLEX is a trusted publisher on the synology machine
 #https://support.plex.tv/articles/205165858-how-to-add-plex-s-package-signing-public-key-to-synology-nas-package-center/?_ga=2.79456468.1302513651.1595441353-662068920.1595441353
 
@@ -12,7 +15,6 @@ plex_installer_location="/volume1/Server2/Software/Software/PLEX"
 log_file_location="/volume1/web/logging/notifications/plex_update.txt"
 MSG='PLEX_Update_Installation_In_Progress'
 plex_skip_versions_directory="/volume1/web/config/plex_versions"
-from_email_address="admin@admin.com"
 
 
 #create a lock file in the ramdisk directory to prevent more than one instance of this script from executing  at once
@@ -35,6 +37,7 @@ if [ -r "$config_file_location" ]; then
 	fix_bad_driver=${explode[3]} #known intel driver issue with Gemini Lake processors on synology, seems to be fixed now as of 1/18/2022
 	script_enable=${explode[4]} #completely disable the script?
 	skip_version=0
+	from_email_address=${explode[5]}
 
 
 	if [ $script_enable -eq 1 ] 
