@@ -172,11 +172,41 @@ the .sh script file has the following user configurable parameters
 4. "plex_update_shell_file_log_location" is where the log output of the .sh script file will be stored. 
 5. "form_submit_location" is where the PHP submitted form data will be sent to. this file is meant to be called out from within another PHP file, in this case index.php. however the file can be used standalone and if so desired, this can be set to `plex_update_config.php` to have the data sent directly to the PHP file
 
+### Configuration of synology web server "http" user permissions
+
+by default the synology user "http" that web station uses does not have write permissions to the "web" file share. 
+
+1. go to Control Panel -> User & Group -> "Group" tab
+2. click on the "http" user and press the "edit" button
+3. go to the "permissions" tab
+4. scroll down the list of shared folders to find "web" and click on the right checkbox under "customize" 
+5. check ALL boxes and click "done"
+6. Verify the window indicates the "http" user group has "Full Control" and click the checkbox at the bottom "Apply to this folder, sub folders and files" and click "Save"
+
+<img src="https://raw.githubusercontent.com/wallacebrf/synology_snmp/main/Images/http_user1.png" alt="1313">
+<img src="https://raw.githubusercontent.com/wallacebrf/synology_snmp/main/Images/http_user2.png" alt="1314">
+<img src="https://raw.githubusercontent.com/wallacebrf/synology_snmp/main/Images/http_user3.png" alt="1314">
+
 ### PHP web-page Configuration and initialization 
 
 Navigate to the PHP file address on the web server. Adjust the parameters available as desired. they will all be initialized to default values and the configuration file will be created.
 
-use Synology task scheduler to create a task occurring once per day as "root". If MailPlus server is installed the script can email the logs automatically. if not, use task scheduler's email function 
+
+### Configuration of Task Scheduler 
+
+1. Control Panel -> Task Scheduler
+2. Click ```Create -> Scheduled Task -> User-defined script```
+3. Under "General Settings" name the script "PLEX Auto-Update" and choose the "root" user and ensure the task is enabled
+4. Click the "Schedule" tab at the top of the window. in this example we will set it to run daily and will run at 11:00 PM
+5. Configure to run daily 
+6. Under Time, set "First run time" to "23" and "00"
+7. under "Frequency" select "every day"
+8. under last run time select "23:00"
+9. go to the "Task Settings" tab
+10. Ensure "Send run details by email" is checked and enter the email address to send the logs to. 
+11. Under "Run command" enter ```bash /volumex/[shared_foler_name]/plex_backup.sh``` NOTE: ensure the ```/volumex/[shared_foler_name]/``` is where the script is located
+12. click "ok" in the bottom right
+13. IF desired, find the newly created task in your list, right click and select "run". when a confirmation window pops up, choose "yes". The script will run. 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
