@@ -62,7 +62,7 @@ Auto-Update Plex
 
 This script is for synology systems running DSM6 or DSM7 for automatically updating the native install package from the PLEX website. 
 
-The script polls the PLEX download page. If a new update is available, an email will be sent to the configured email address detailing the updating including the new and fixed release notes. If the package was released longer than a configurable number of days (1-14 days) the update will be installed otherwise the update will be skipped. 
+The script polls the PLEX download page. If a new update is available, an email will be sent to the configured email address detailing the updating including the new and fixed release notes. If the package was released longer than a configurable number of days (1-30 days) the update will be installed otherwise the update will be skipped. 
 
 If it is desired to not install a particular release, that version can be defined as "skipped" and the script will ignore that release going forward. 
 
@@ -74,13 +74,13 @@ The script has a configuration page that allows the user to set the following pa
 
 2.) email address to send logs / notices to
 
-3.) minimum age of the latest PLEX package release before the upgrade will occur. this is adjustable between 1 and 14 days. this is used to allow a user to wait and see if issues arise with a particular PLEX release before installing
+3.) minimum age of the latest PLEX package release before the upgrade will occur. this is adjustable between 1 and 30 days. this is used to allow a user to wait and see if issues arise with a particular PLEX release before installing
 
 4.) Download PLEX-PASS Beta Packages allows to control if the regular public release or the beta release updates are used
 
-5.) Delete Bad Intel Driver? (Needed for Gemini Lake Processors) allows to delete the intel driver to fix issues with the DS920. this issue appears to be fixed and is not needed at the moment, but the ability to perform this function is still there
+5.) DEPRECIATED - not really required anymore as PLEX has solved the driver issue. Delete Bad Intel Driver? (Needed for Gemini Lake Processors) allows to delete the intel driver to fix issues with the DS920. this issue appears to be fixed and is not needed at the moment, but the ability to perform this function is still there
 
-6.) add a version of PLEX to SKIP so the installer will ignore the release. this is useful if the release appears to have a bug the user is concerned about
+6.) add a version of PLEX to SKIP so the installer will ignore the release. this is useful if the release appears to have a bug the user is concerned about. when adding a skipped version only add the version number, do not add the ```.skip``` the code will add that itself. 
 
 the skipped versions can also be removed if the version is actually desired
 
@@ -118,7 +118,21 @@ Synology web station must be configured with PHP available
 
 ### Installation
 
+create the following directories
+
+1. /volume1/web/logging/
+
+2. /volume1/web/logging/notifications
+
+3. /volume1/web/config
+
+4. /volume1/web/config/plex_versions
+
+Note: above directory ```/volume1/web/``` is the root of the PHP web server running on the Synology NAS
+
 ### .sh script file `PlexUpdate.sh`
+
+Copy ```PlexUpdate.sh``` into the ```/volume1/web/logging/``` directory and open in a text editor, i recommend notepad++
 
 the .sh script file has the following user configurable parameters
 
@@ -153,7 +167,7 @@ the .sh script file has the following user configurable parameters
 
 ### -> PHP Webserver
 
-1. copy `plex_update_config.php` and `functions.php` onto a locally hosted web server the .sh script file is also installed on. Ensure `functions.php` is in the root of the web server public directory
+1. copy `plex_update_config.php` into the ```/volume1/web/config``` directory and copy `functions.php` itno the ```/volume1/web``` directory. Ensure `functions.php` is in the root of the web server public directory
 2. within the `plex_update_config.php` file edit the following lines as desired
 
 `$use_sessions=1;`
