@@ -15,10 +15,10 @@
   <a href="https://github.com/wallacebrf/plex_update">
   </a>
 
-<h3 align="center">Synology DSM6/7 PLEX Native Package Auto Update Script and PHP Configuration Page</h3>
+<h3 align="center">Synology DSM7.0 and higher PLEX Native Package Auto Update Script and PHP Configuration Page</h3>
 
   <p align="center">
-    This project allows for the automatic updates to PLEX installed on Synology NAS devices running DSM6 or DSM7. The script will first terminate any active streams and send the affected users a custom message. The script will stop the PLEX package within DSM, download the latest release, install th update, and restart PLEX. 
+    This project allows for the automatic updates to PLEX installed on Synology NAS devices running DSM7.0 or higher including DSM 7.2.2 and above. The script will first terminate any active streams and send the affected users a custom message. The script will stop the PLEX package within DSM, download the latest release, install th update, and restart PLEX. 
     <br />
     <a href="https://github.com/wallacebrf/plex_update"><strong>Explore the docs »</strong></a>
     <br />
@@ -64,7 +64,7 @@
 
 Auto-Update Plex
 
-This script is for synology systems running DSM6 or DSM7 for automatically updating the native install package from the PLEX website. 
+This script is for synology systems running DSM7 for automatically updating the native install package from the PLEX website. 
 
 The script polls the PLEX download page. If a new update is available, an email will be sent to the configured email address detailing the updating including the new and fixed release notes. If the package was released longer than a configurable number of days (1-30 days) the update will be installed otherwise the update will be skipped. 
 
@@ -106,11 +106,11 @@ the skipped versions can also be removed if the version is actually desired
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This project requires the a Synology NAS running DSM6 or DSM7. This project only supports the native PLEX package supplied by PLEX at the following site: https://www.plex.tv/media-server-downloads/. This project is not intended to update Docker installations and does not support other operating systems. 
+This project requires the a Synology NAS running DSM7. This project only supports the native PLEX package supplied by PLEX at the following site: https://www.plex.tv/media-server-downloads/. This project is not intended to update Docker installations and does not support other operating systems. 
 
 ### Prerequisites
 
-Synology NAS running DSM6 or DSM7
+Synology NAS running DSM7
 
 Native PLEX package from https://www.plex.tv/media-server-downloads/ 
 
