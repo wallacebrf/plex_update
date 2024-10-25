@@ -1,10 +1,9 @@
 #!/bin/bash
 
-#version 06/30/2022
+#version 10/23/2024
 #By Brian Wallace
 
-#if using DSM6, make sure PLEX is a trusted publisher on the synology machine
-#https://support.plex.tv/articles/205165858-how-to-add-plex-s-package-signing-public-key-to-synology-nas-package-center/?_ga=2.79456468.1302513651.1595441353-662068920.1595441353
+#this script now only supports DSM version 7.0 and higher. Support for DSM 6.x.x has been removed. 
 
 #USER VARIABLES
 lock_file_location="/volume1/web/logging/notifications/PlexUpdate.lock"
@@ -34,7 +33,7 @@ if [ -r "$config_file_location" ]; then
 	plex_pass_beta=${explode[0]} # set to "1" to download PLEX-PASS enabled BETA versions. Set to "0" to download the public release versions. Public Release Versions tend to be more stable
 	minimim_package_age=${explode[1]} #number of days the package must be released before it is downloaded
 	email_address=${explode[2]} #email address to send logs /results to
-	fix_bad_driver=${explode[3]} #known intel driver issue with Gemini Lake processors on synology, seems to be fixed now as of 1/18/2022
+	#fix_bad_driver=${explode[3]} #known intel driver issue with Gemini Lake processors on synology, seems to be fixed now as of 1/18/2022
 	script_enable=${explode[4]} #completely disable the script?
 	skip_version=0
 	from_email_address=${explode[5]}
@@ -66,22 +65,22 @@ if [ -r "$config_file_location" ]; then
 		echo "subject: Server-PLEX PLEX Update Available " >> $log_file_location
 		echo "" >> $log_file_location
 	
-		#determine DSM version to ensure the DSM6 vs DSM7 version of the synology PLEX package is downloaded
+		#determine DSM version to ensure the DSM7.x vs DSM 7.2.2 version of the synology PLEX package is downloaded
 		DSMVersion=$(                   cat /etc.defaults/VERSION | grep -i 'productversion=' | cut -d"\"" -f 2)
-		
+
 		echo "" |& tee -a $log_file_location
-		MinDSMVersion=7.0
+		MinDSMVersion=7.2.2
 		/usr/bin/dpkg --compare-versions "$MinDSMVersion" gt "$DSMVersion"
 		if [ "$?" -eq "0" ]; then
-			dsm_type="Synology"
-			echo "DSM version is 6.x.x" |& tee -a $log_file_location
-			echo "Current DSM Version Installed: $DSMVersion" |& tee -a $log_file_location
-			plex_package_name="Plex Media Server"
-			plex_directory_name="Plex\ Media\ Server"
-			plex_Preferences_loction="Plex/Library/Application Support/Plex Media Server/Preferences.xml"
-		else
 			dsm_type="Synology (DSM 7)"
-			echo "DSM version is 7.x.x" |& tee -a $log_file_location
+			echo "DSM version is between 7.0 and 7.2.1" |& tee -a $log_file_location
+			echo "Current DSM Version Installed: $DSMVersion" |& tee -a $log_file_location
+			plex_package_name="PlexMediaServer"
+			plex_directory_name="PlexMediaServer"
+			plex_Preferences_loction="$plex_directory_name/AppData/Plex Media Server/Preferences.xml"
+		else
+			dsm_type="Synology (DSM 7.2.2+)"
+			echo "DSM version is 7.2.2 or Higher" |& tee -a $log_file_location
 			echo "Current DSM Version Installed: $DSMVersion" |& tee -a $log_file_location
 			plex_package_name="PlexMediaServer"
 			plex_directory_name="PlexMediaServer"
@@ -268,26 +267,6 @@ if [ -r "$config_file_location" ]; then
 					echo |& tee -a $log_file_location
 					echo "Installing $plex_package_name version $newversion...." |& tee -a $log_file_location
 					/usr/syno/bin/synopkg install $plex_installer_location/$package |& tee -a $log_file_location
-				
-					if [ $fix_bad_driver -eq 1 ] 
-					then
-						sleep 5
-						#delete intel driver due to known issue with it causing bad transcoding 
-					
-						#check to see if the driver file actually exists or not
-						FILE=/$plex_installed_volume/@appstore/$plex_directory_name/lib/dri/iHD_drv_video.so
-						if [ -f "$FILE" ]; then
-							echo "Removing Bad Intel Driver to Correct Transcoding Issue...." |& tee -a $log_file_location
-							rm /$plex_installed_volume/@appstore/$plex_directory_name/lib/dri/iHD_drv_video.so |& tee -a $log_file_location
-							if [ -f "$FILE" ]; then
-								echo "Removing driver failed" |& tee -a $log_file_location
-							else
-								echo "Removing drive was successful" |& tee -a $log_file_location
-							fi
-						else 
-							echo "Bad Intel Driver Fix Has Already Been Applied" |& tee -a $log_file_location
-						fi
-					fi
 					sleep 1
 				
 					#####################################
